@@ -1,0 +1,45 @@
+{
+    "name": "stylelint-plugin-property",
+    "version": "0.0.0",
+    "description": "Stylelint plugin for managing arbitrary properties. Includes Less and Sass support.",
+    "keywords": [
+        "property",
+        "linter",
+        "lint",
+        "css",
+        "less",
+        "sass",
+        "stylelint",
+        "plugin"
+    ],
+    "homepage": "https://github.com/electrovir/stylelint-plugin-property#readme",
+    "bugs": {
+        "url": "https://github.com/electrovir/stylelint-plugin-property/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/electrovir/stylelint-plugin-property.git"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "electrovir",
+        "url": "https://github.com/electrovir"
+    },
+    "main": "dist/index.js",
+    "scripts": {
+        "prepublishOnly": "npm run test:full",
+        "spellcheck": "virmator spellcheck",
+        "test": "virmator compile && jest",
+        "test:full": "npm test && npm run spellcheck && virmator format check",
+        "format": "virmator format write"
+    },
+    "dependencies": {
+        "stylelint-rule-creator": "^4.1.6"
+    },
+    "devDependencies": {
+        "virmator": "^1.1.15"
+    },
+    "peerDependencies": {
+        "stylelint": "^13.13.1"
+    }
+}
