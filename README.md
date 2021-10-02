@@ -8,9 +8,9 @@ Stylelint plugin for managing arbitrary properties.
 
 Go to each rule's page (click on the name below) to see specific details.
 
-| Rule                                           | auto-fix |
-| ---------------------------------------------- | -------- |
-| [plugin-property/property](src/rules/property) | &cross;  |
+| Rule                                           | auto-fix   |
+| ---------------------------------------------- | ---------- |
+| [plugin-property/property](src/rules/property) | no &cross; |
 
 # Rule Options
 
