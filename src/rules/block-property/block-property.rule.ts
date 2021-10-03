@@ -1,9 +1,21 @@
-import {createDefaultRule, DefaultOptionMode, DefaultRuleOptions} from 'stylelint-rule-creator';
+import {
+    createDefaultRule,
+    DefaultOptionMode,
+    DefaultRuleOptions,
+    doesMatchLineExceptions,
+} from 'stylelint-rule-creator';
 import {prefix} from '../../plugin-util';
 
-const messages = {
-    extensionRequired(line: string, property: string) {
+export const messages = {
+    propertyBlocked(line: string, property: string) {
         return `Property "${property}" is blocked: ${line}`;
+    },
+    invalidMode(mode: DefaultOptionMode) {
+        return `Invalid option mode "${mode}". Only valid mode is "${DefaultOptionMode.BLOCK}"`;
+    },
+    missingBlockedProperties: () => 'No properties or detailProperties options were provided.',
+    detailedPropertiesWithoutExceptions(propName: string) {
+        return `Detailed properties were given but no exceptions were given for property "${propName}"`;
     },
 };
 
@@ -21,23 +33,108 @@ export type BlockPropertyExceptions = {
 };
 
 export type BlockPropertyConfig = {
-    property: string;
+    property?: string;
     exceptions?: BlockPropertyExceptions;
 };
 
 export type BlockPropertyRuleOptions = DefaultRuleOptions & {
-    properties: string[];
+    /** These properties will be blocked entirely in all uses. */
+    properties: string[] | string;
+    /** These properties are blocked but have exceptions. */
     detailedProperties?: BlockPropertyConfig | BlockPropertyConfig[];
 };
 
 const defaultOptions: BlockPropertyRuleOptions = {
     mode: DefaultOptionMode.BLOCK,
-    properties: [],
+    properties: ['float'],
 };
 
 export const blockPropertyRule = createDefaultRule<typeof messages, BlockPropertyRuleOptions>({
     ruleName: `${prefix}/property`,
     messages,
     defaultOptions,
-    ruleCallback: (report, messages, {ruleOptions, root, context, exceptionRegExps}) => {},
+    ruleCallback: (report, messages, {ruleOptions, root, exceptionRegExps}) => {
+        if (ruleOptions.mode !== DefaultOptionMode.BLOCK) {
+            report({message: messages.invalidMode(ruleOptions.mode), node: root});
+        }
+        const containsProperties: boolean = !!(
+            ruleOptions.properties && ruleOptions.properties.length
+        );
+
+        const containsDetailedProperties: boolean = !!(Array.isArray(ruleOptions.detailedProperties)
+            ? ruleOptions.detailedProperties.length
+            : ruleOptions.detailedProperties);
+
+        if (!containsProperties && !containsDetailedProperties) {
+            report({message: messages.missingBlockedProperties(), node: root});
+        }
+
+        const rawProperties: string | string[] = ruleOptions.properties || [];
+        const properties: string[] = Array.isArray(rawProperties) ? rawProperties : [rawProperties];
+
+        const detailedProperties: BlockPropertyConfig[] = ruleOptions.detailedProperties
+            ? Array.isArray(ruleOptions.detailedProperties)
+                ? ruleOptions.detailedProperties
+                : [ruleOptions.detailedProperties]
+            : [];
+
+        root.walkRules((rule) => {
+            rule.walkDecls((declaration) => {
+                if (doesMatchLineExceptions(declaration, exceptionRegExps)) {
+                    return;
+                }
+
+                // plain blocked property strings
+                if (properties.includes(declaration.prop)) {
+                    return report({
+                        message: messages.propertyBlocked(declaration.toString(), declaration.prop),
+                        node: declaration,
+                    });
+                }
+
+                // detailed blocked properties with exceptions
+                const relevantDetails = detailedProperties.filter((details) => {
+                    return details.property === declaration.prop;
+                });
+                relevantDetails.forEach((relevant) => {
+                    if (!relevant) {
+                        throw new Error(
+                            `error from stylelint-plugin-property: Filtered array had length of one but first entry is not defined!??`,
+                        );
+                    }
+
+                    const exceptions = relevant.exceptions;
+                    if (!exceptions || (!exceptions.selectors && !exceptions.values)) {
+                        return report({
+                            message: messages.detailedPropertiesWithoutExceptions(declaration.prop),
+                            node: root,
+                        });
+                    }
+
+                    const ruleSelectors: string[] = rule.selector
+                        .split(',')
+                        .map((selector) => selector.trim());
+
+                    const selectorExempt = exceptions.selectors
+                        ? ruleSelectors.every((ruleSelector) =>
+                              exceptions.selectors!.includes(ruleSelector),
+                          )
+                        : true;
+                    const valueExempt = exceptions.values
+                        ? exceptions.values.includes(declaration.value)
+                        : true;
+
+                    if (!selectorExempt || !valueExempt) {
+                        return report({
+                            message: messages.propertyBlocked(
+                                declaration.toString(),
+                                declaration.prop,
+                            ),
+                            node: declaration,
+                        });
+                    }
+                });
+            });
+        });
+    },
 });
