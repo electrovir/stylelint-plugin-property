@@ -1,6 +1,6 @@
 {
     "name": "stylelint-plugin-property",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "Stylelint plugin for managing arbitrary properties. Includes Less and Sass support.",
     "keywords": [
         "property",

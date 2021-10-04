@@ -3,6 +3,7 @@ import {
     DefaultOptionMode,
     DefaultRuleOptions,
     doesMatchLineExceptions,
+    RuleViolation,
 } from 'stylelint-rule-creator';
 import {prefix} from '../../plugin-util';
 
@@ -96,7 +97,7 @@ export const blockPropertyRule = createDefaultRule<typeof messages, BlockPropert
                 const relevantDetails = detailedProperties.filter((details) => {
                     return details.property === declaration.prop;
                 });
-                relevantDetails.forEach((relevant) => {
+                const results = relevantDetails.map((relevant): RuleViolation | undefined => {
                     if (!relevant) {
                         throw new Error(
                             `error from stylelint-plugin-property: Filtered array had length of one but first entry is not defined!??`,
@@ -105,10 +106,10 @@ export const blockPropertyRule = createDefaultRule<typeof messages, BlockPropert
 
                     const exceptions = relevant.exceptions;
                     if (!exceptions || (!exceptions.selectors && !exceptions.values)) {
-                        return report({
+                        return {
                             message: messages.detailedPropertiesWithoutExceptions(declaration.prop),
                             node: root,
-                        });
+                        };
                     }
 
                     const ruleSelectors: string[] = rule.selector
@@ -125,15 +126,29 @@ export const blockPropertyRule = createDefaultRule<typeof messages, BlockPropert
                         : true;
 
                     if (!selectorExempt || !valueExempt) {
-                        return report({
+                        return {
                             message: messages.propertyBlocked(
                                 declaration.toString(),
                                 declaration.prop,
                             ),
                             node: declaration,
-                        });
+                        };
                     }
+
+                    return undefined;
                 });
+
+                const someExceptionsPassed = results.some((result) => result == undefined);
+
+                if (!someExceptionsPassed && relevantDetails.length) {
+                    const firstResult = results[0];
+                    if (!firstResult) {
+                        throw new Error(
+                            `First result was undefined even though we just checked that none are undefined.`,
+                        );
+                    }
+                    report(firstResult);
+                }
             });
         });
     },
