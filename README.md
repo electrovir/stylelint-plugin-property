@@ -8,53 +8,34 @@ Stylelint plugin for managing arbitrary properties.
 
 Go to each rule's page (click on the name below) to see specific details.
 
-| Rule                                           | auto-fix   |
-| ---------------------------------------------- | ---------- |
-| [plugin-property/property](src/rules/property) | no &cross; |
+| Rule                       | auto-fix   |
+| -------------------------- | ---------- |
+| `plugin-property/property` | no &cross; |
 
 # Rule Options
 
-All rules respect the following primary option format with _no_ secondary options:
-
--   boolean input
+-   Object input with exceptions. At least one of `properties` or `detailedProperties` must be defined.
 
     ```javascript
     {
-        "rule-name": true // use default rule behavior
-    }
-    ```
-
-    ```javascript
-    {
-        "rule-name": false // disables rule
-    }
-    ```
-
--   object input
-
-    ```javascript
-    {
-        "mode": "require" // requires the rule's default
-    }
-    ```
-
-    ```javascript
-    {
-        "mode": "block" // blocks the rule's default
-    }
-    ```
-
-    ```javascript
-    {
-        "mode": "off" // disable rule
-    }
-    ```
-
--   object input with exceptions
-
-    ```javascript
-    {
-        "mode": "require",
+        "mode": "block",
+        // optional: list of property names that are outright blocked
+        properties: ['float'],
+        // optional: list of properties with exceptions
+        detailedProperties: [
+            {
+                property: 'font-family',
+                // For the exception to pass on any given occurrence, "selectors" must match one of
+                // the selectors for the rule in question AND the value assigned to the property
+                // must match at least one of the values below.
+                // This is essentially an AND operation. For the equivalent OR operation, add more
+                // entries to the detailedProperties array for the same property name.
+                exceptions: {
+                    values: ['inherit', 'unset'],
+                    selectors: ['input', 'select']
+                }
+            }
+        ],
         // optional input
         // these use glob matching with globstar turned ON
         "fileExceptions": [
