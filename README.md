@@ -1,6 +1,6 @@
 # Stylelint Plugin Property
 
-[![tests](https://github.com/electrovir/stylelint-plugin-property/actions/workflows/virmator-tests.yml/badge.svg?branch=master)](https://github.com/electrovir/stylelint-plugin-property/actions/workflows/virmator-tests.yml)
+[![tests](https://github.com/electrovir/stylelint-plugin-property/actions/workflows/virmator-tests.yml/badge.svg?branch=main)](https://github.com/electrovir/stylelint-plugin-property/actions/workflows/virmator-tests.yml)
 
 Stylelint plugin for managing arbitrary properties.
 
