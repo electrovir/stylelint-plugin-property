@@ -8,9 +8,9 @@ Stylelint plugin for managing arbitrary properties.
 
 Go to each rule's page (click on the name below) to see specific details.
 
-| Rule                       | auto-fix   |
-| -------------------------- | ---------- |
-| `plugin-property/property` | no &cross; |
+| Rule                               | auto-fix   |
+| ---------------------------------- | ---------- |
+| `plugin-property/block-properties` | no &cross; |
 
 # Rule Options
 
@@ -41,7 +41,7 @@ Go to each rule's page (click on the name below) to see specific details.
         "fileExceptions": [
             "**/*colors.less", // ignores any files ending in colors.less in any directory
             "*colors.less" // ignore files ending in colors.less only in the current directory
-        ]
+        ],
         // optional input
         // these use glob matching with globstar turned OFF
         "lineExceptions": [

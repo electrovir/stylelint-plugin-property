@@ -50,8 +50,8 @@ const defaultOptions: BlockPropertyRuleOptions = {
     properties: ['float'],
 };
 
-export const blockPropertyRule = createDefaultRule<typeof messages, BlockPropertyRuleOptions>({
-    ruleName: `${prefix}/property`,
+export const blockPropertiesRule = createDefaultRule<typeof messages, BlockPropertyRuleOptions>({
+    ruleName: `${prefix}/block-properties`,
     messages,
     defaultOptions,
     ruleCallback: (report, messages, {ruleOptions, root, exceptionRegExps}) => {

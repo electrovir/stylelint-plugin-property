@@ -1,9 +1,9 @@
 import {DefaultOptionMode, testDefaultRule} from 'stylelint-rule-creator';
 import {pluginPath} from '../../plugin-util';
-import {blockPropertyRule, messages} from './block-property.rule';
+import {blockPropertiesRule, messages} from './block-properties.rule';
 
 testDefaultRule({
-    rule: blockPropertyRule,
+    rule: blockPropertiesRule,
     pluginPath: pluginPath,
     tests: [
         {
@@ -141,7 +141,7 @@ testDefaultRule({
             ...test,
             reject: test.reject.map((rejection) => ({
                 ...rejection,
-                message: rejection.message + ` (${blockPropertyRule.ruleName})`,
+                message: rejection.message + ` (${blockPropertiesRule.ruleName})`,
             })),
         };
     }),

@@ -1,3 +1,3 @@
-import {blockPropertyRule} from './rules/block-property/block-property.rule';
+import {blockPropertiesRule} from './rules/block-properties/block-properties.rule';
 
-export default [blockPropertyRule];
+export default [blockPropertiesRule];

@@ -1,6 +1,6 @@
 {
     "name": "stylelint-plugin-property",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "Stylelint plugin for managing arbitrary properties. Includes Less and Sass support.",
     "keywords": [
         "property",
@@ -27,19 +27,19 @@
     },
     "main": "dist/index.js",
     "scripts": {
+        "format": "virmator format write",
         "prepublishOnly": "npm run test:full",
         "spellcheck": "virmator spellcheck",
         "test": "virmator compile && jest",
-        "test:full": "npm test && npm run spellcheck && virmator format check",
-        "format": "virmator format write"
+        "test:full": "npm test && npm run spellcheck && virmator format check"
     },
     "dependencies": {
-        "stylelint-rule-creator": "^4.1.6"
+        "stylelint-rule-creator": "^4.1.8"
     },
     "devDependencies": {
-        "virmator": "^1.1.15"
-    },
-    "peerDependencies": {
-        "stylelint": "^13.13.1"
+        "jest": "^27.2.5",
+        "stylelint": "^13.13.1",
+        "stylelint-jest-rule-tester": "^2.1.6",
+        "virmator": "^1.2.0"
     }
 }
