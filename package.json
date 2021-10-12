@@ -37,7 +37,10 @@
         "stylelint-rule-creator": "^4.1.8"
     },
     "devDependencies": {
-        "jest": "^27.2.5",
+        "@types/jest": "^27.0.2",
+        "@types/stylelint": "^13.13.2",
+        "fsevents": "^2.3.2",
+        "jest": "^27.0.2",
         "stylelint": "^13.13.1",
         "stylelint-jest-rule-tester": "^2.1.6",
         "virmator": "^1.2.0"
