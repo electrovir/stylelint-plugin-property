@@ -101,7 +101,7 @@ testDefaultRule({
                     code: `body {color: blue;}`,
                 },
                 {
-                    // by default float is blocked... just do we can have a default lol
+                    // by default float is blocked... just so we can have a default lol
                     code: `body {float: right;}`,
                 },
                 {
