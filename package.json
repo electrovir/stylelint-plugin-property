@@ -1,6 +1,6 @@
 {
     "name": "stylelint-plugin-property",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Stylelint plugin for managing arbitrary properties. Includes Less and Sass support.",
     "keywords": [
         "property",
@@ -39,10 +39,12 @@
     "devDependencies": {
         "@types/jest": "^27.0.2",
         "@types/stylelint": "^13.13.2",
-        "fsevents": "^2.3.2",
         "jest": "^27.0.2",
         "stylelint": "^13.13.1",
         "stylelint-jest-rule-tester": "^2.1.6",
         "virmator": "^1.2.0"
+    },
+    "optionalDependencies": {
+        "fsevents": "^2.3.2"
     }
 }
