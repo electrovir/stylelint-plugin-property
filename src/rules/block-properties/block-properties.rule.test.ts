@@ -117,6 +117,38 @@ testDefaultRule({
             ],
         },
         {
+            describe: 'can make it allowed for @rules',
+            ruleOptions: {
+                mode: DefaultOptionMode.BLOCK,
+                properties: [],
+                detailedProperties: [
+                    {
+                        property: /^font-.*/,
+                        exceptions: {
+                            selectors: ['@font-face'],
+                        },
+                    },
+                ],
+            },
+            description: 'placeholder',
+            accept: [
+                {
+                    code: `@font-face {font-family: serif;}`,
+                },
+            ],
+            reject: [
+                {
+                    code: `body {font-family: serif;}`,
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: serif',
+                        'font-family',
+                        'body',
+                        'serif',
+                    ),
+                },
+            ],
+        },
+        {
             describe: "nested rules don't cause issues",
             ruleOptions: {
                 mode: DefaultOptionMode.BLOCK,

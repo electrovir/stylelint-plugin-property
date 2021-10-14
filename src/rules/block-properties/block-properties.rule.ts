@@ -1,4 +1,4 @@
-import {Container, Rule} from 'postcss';
+import {AtRule, Container, Rule} from 'postcss';
 import {
     createDefaultRule,
     DefaultOptionMode,
@@ -59,7 +59,7 @@ export type BlockPropertyConfig = {
 
 export type BlockPropertyRuleOptions = DefaultRuleOptions & {
     /** These properties will be blocked entirely in all uses. */
-    properties: (string | RegExp)[] | string | RegExp;
+    properties?: (string | RegExp)[] | string | RegExp;
     /** These properties are blocked but have exceptions. */
     detailedProperties?: BlockPropertyConfig[] | BlockPropertyConfig;
 };
@@ -67,8 +67,8 @@ export type BlockPropertyRuleOptions = DefaultRuleOptions & {
 function findRuleSelector(node: Container): string {
     if (node.type === 'rule') {
         return (node as Rule).selector;
-    } else if (node.parent) {
-        return findRuleSelector(node.parent);
+    } else if (node.type === 'atrule') {
+        return `@${(node as AtRule).name}`;
     } else {
         return '';
     }
