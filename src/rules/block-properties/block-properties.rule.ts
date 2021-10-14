@@ -20,6 +20,21 @@ export const messages = {
     },
 };
 
+function doesMatch(fromCss: string, criteria: string | RegExp | undefined): boolean {
+    if (!criteria) {
+        return false;
+    }
+
+    if (fromCss === criteria) {
+        return true;
+    }
+    if (fromCss.match(criteria)) {
+        return true;
+    }
+
+    return false;
+}
+
 /**
  * Each exception property here is treated here as an AND.
  *
@@ -29,20 +44,20 @@ export const messages = {
  * the same property name.
  */
 export type BlockPropertyExceptions = {
-    values?: string[];
-    selectors?: string[];
+    values?: (string | RegExp)[];
+    selectors?: (string | RegExp)[];
 };
 
 export type BlockPropertyConfig = {
-    property?: string;
+    property?: string | RegExp;
     exceptions?: BlockPropertyExceptions;
 };
 
 export type BlockPropertyRuleOptions = DefaultRuleOptions & {
     /** These properties will be blocked entirely in all uses. */
-    properties: string[] | string;
+    properties: (string | RegExp)[] | string | RegExp;
     /** These properties are blocked but have exceptions. */
-    detailedProperties?: BlockPropertyConfig | BlockPropertyConfig[];
+    detailedProperties?: BlockPropertyConfig[] | BlockPropertyConfig;
 };
 
 const defaultOptions: BlockPropertyRuleOptions = {
@@ -58,9 +73,9 @@ export const blockPropertiesRule = createDefaultRule<typeof messages, BlockPrope
         if (ruleOptions.mode !== DefaultOptionMode.BLOCK) {
             report({message: messages.invalidMode(ruleOptions.mode), node: root});
         }
-        const containsProperties: boolean = !!(
-            ruleOptions.properties && ruleOptions.properties.length
-        );
+        const containsProperties: boolean = !!(Array.isArray(ruleOptions.properties)
+            ? ruleOptions.properties.length
+            : ruleOptions.properties);
 
         const containsDetailedProperties: boolean = !!(Array.isArray(ruleOptions.detailedProperties)
             ? ruleOptions.detailedProperties.length
@@ -70,8 +85,10 @@ export const blockPropertiesRule = createDefaultRule<typeof messages, BlockPrope
             report({message: messages.missingBlockedProperties(), node: root});
         }
 
-        const rawProperties: string | string[] = ruleOptions.properties || [];
-        const properties: string[] = Array.isArray(rawProperties) ? rawProperties : [rawProperties];
+        const rawProperties: (string | RegExp)[] | RegExp | string = ruleOptions.properties || [];
+        const properties: (string | RegExp)[] = Array.isArray(rawProperties)
+            ? rawProperties
+            : [rawProperties];
 
         const detailedProperties: BlockPropertyConfig[] = ruleOptions.detailedProperties
             ? Array.isArray(ruleOptions.detailedProperties)
@@ -86,7 +103,7 @@ export const blockPropertiesRule = createDefaultRule<typeof messages, BlockPrope
                 }
 
                 // plain blocked property strings
-                if (properties.includes(declaration.prop)) {
+                if (properties.some((criteria) => doesMatch(declaration.prop, criteria))) {
                     return report({
                         message: messages.propertyBlocked(declaration.toString(), declaration.prop),
                         node: declaration,
@@ -95,7 +112,7 @@ export const blockPropertiesRule = createDefaultRule<typeof messages, BlockPrope
 
                 // detailed blocked properties with exceptions
                 const relevantDetails = detailedProperties.filter((details) => {
-                    return details.property === declaration.prop;
+                    return doesMatch(declaration.prop, details.property);
                 });
                 const results = relevantDetails.map((relevant): RuleViolation | undefined => {
                     if (!relevant) {
@@ -118,11 +135,15 @@ export const blockPropertiesRule = createDefaultRule<typeof messages, BlockPrope
 
                     const selectorExempt = exceptions.selectors
                         ? ruleSelectors.every((ruleSelector) =>
-                              exceptions.selectors!.includes(ruleSelector),
+                              exceptions.selectors!.some((criteria) =>
+                                  doesMatch(ruleSelector, criteria),
+                              ),
                           )
                         : true;
                     const valueExempt = exceptions.values
-                        ? exceptions.values.includes(declaration.value)
+                        ? exceptions.values.some((criteria) =>
+                              doesMatch(declaration.value, criteria),
+                          )
                         : true;
 
                     if (!selectorExempt || !valueExempt) {

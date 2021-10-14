@@ -50,3 +50,5 @@ Go to each rule's page (click on the name below) to see specific details.
         ],
     }
     ```
+
+-   Everywhere in `properties` or `detailedProperties` where `string` is allowed, so is `RegExp`.
