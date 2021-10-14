@@ -59,7 +59,12 @@ testDefaultRule({
             reject: [
                 {
                     code: `body {font-family: sans-serif;}`,
-                    message: messages.propertyBlocked('font-family: sans-serif', 'font-family'),
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: sans-serif',
+                        'font-family',
+                        'body',
+                        'sans-serif',
+                    ),
                 },
                 {
                     code: `body {font-weight: weight;}`,
@@ -67,11 +72,21 @@ testDefaultRule({
                 },
                 {
                     code: `body {font-family: inherit;}`,
-                    message: messages.propertyBlocked('font-family: inherit', 'font-family'),
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: inherit',
+                        'font-family',
+                        'body',
+                        'inherit',
+                    ),
                 },
                 {
                     code: `input {font-family: sans-serif;}`,
-                    message: messages.propertyBlocked('font-family: sans-serif', 'font-family'),
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: sans-serif',
+                        'font-family',
+                        'input',
+                        'sans-serif',
+                    ),
                 },
             ],
         },
@@ -98,6 +113,53 @@ testDefaultRule({
                 {
                     code: `body {background: blue;}`,
                     message: messages.propertyBlocked('background: blue', 'background'),
+                },
+            ],
+        },
+        {
+            describe: "nested rules don't cause issues",
+            ruleOptions: {
+                mode: DefaultOptionMode.BLOCK,
+                properties: [/^background.*/],
+                detailedProperties: [
+                    {
+                        property: /^font-.*/,
+                        exceptions: {
+                            values: ['inherit', /@derp.*/],
+                            selectors: ['input', 'select', /vir-*/],
+                        },
+                    },
+                ],
+            },
+            linterOptions: {
+                syntax: 'less' as const,
+            },
+            description: 'placeholder',
+            accept: [
+                {
+                    code: `body {funky-background: blue;}`,
+                },
+                {
+                    code: `body { input {font-family: inherit;} }`,
+                },
+            ],
+            reject: [
+                {
+                    code: `body {background-color: blue;}`,
+                    message: messages.propertyBlocked('background-color: blue', 'background-color'),
+                },
+                {
+                    code: `body { div {background: blue;} }`,
+                    message: messages.propertyBlocked('background: blue', 'background'),
+                },
+                {
+                    code: `body { div {font-family: serif;} }`,
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: serif',
+                        'font-family',
+                        'div',
+                        'serif',
+                    ),
                 },
             ],
         },
@@ -155,11 +217,21 @@ testDefaultRule({
                 },
                 {
                     code: `body {font-family: serif;}`,
-                    message: messages.propertyBlocked('font-family: serif', 'font-family'),
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: serif',
+                        'font-family',
+                        'body',
+                        'serif',
+                    ),
                 },
                 {
                     code: `body {font-size: 5px;}`,
-                    message: messages.propertyBlocked('font-size: 5px', 'font-size'),
+                    message: messages.detailedPropertyBlocked(
+                        'font-size: 5px',
+                        'font-size',
+                        'body',
+                        '5px',
+                    ),
                 },
             ],
         },
@@ -209,19 +281,39 @@ testDefaultRule({
             reject: [
                 {
                     code: `input {font-family: sans-serif;}`,
-                    message: messages.propertyBlocked('font-family: sans-serif', 'font-family'),
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: sans-serif',
+                        'font-family',
+                        'input',
+                        'sans-serif',
+                    ),
                 },
                 {
                     code: `body {font-family: serif;}`,
-                    message: messages.propertyBlocked('font-family: serif', 'font-family'),
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: serif',
+                        'font-family',
+                        'body',
+                        'serif',
+                    ),
                 },
                 {
                     code: `body {font-family: inherit;}`,
-                    message: messages.propertyBlocked('font-family: inherit', 'font-family'),
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: inherit',
+                        'font-family',
+                        'body',
+                        'inherit',
+                    ),
                 },
                 {
                     code: `input {font-family: sans-serif;}`,
-                    message: messages.propertyBlocked('font-family: sans-serif', 'font-family'),
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: sans-serif',
+                        'font-family',
+                        'input',
+                        'sans-serif',
+                    ),
                 },
             ],
         },
