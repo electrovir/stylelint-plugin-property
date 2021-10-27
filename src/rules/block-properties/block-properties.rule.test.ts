@@ -9,7 +9,6 @@ testDefaultRule({
     tests: [
         {
             ruleOptions: true,
-            description: 'placeholder',
             accept: [
                 {
                     code: `body {color: blue;}`,
@@ -37,7 +36,6 @@ testDefaultRule({
                     },
                 ],
             },
-            description: 'placeholder',
             accept: [
                 {
                     code: `body {color: blue;}`,
@@ -96,7 +94,6 @@ testDefaultRule({
                 mode: DefaultOptionMode.BLOCK,
                 properties: [/^background.*/],
             },
-            description: 'placeholder',
             accept: [
                 {
                     code: `body {funky-background: blue;}`,
@@ -117,6 +114,27 @@ testDefaultRule({
             ],
         },
         {
+            describe: 'plain property name does not match other properties',
+            ruleOptions: {
+                mode: DefaultOptionMode.BLOCK,
+                properties: ['font'],
+            },
+            accept: [
+                {
+                    code: `body {font-weight: 42;}`,
+                },
+                {
+                    code: `body {font-family: serif; font-size: 32px;}`,
+                },
+            ],
+            reject: [
+                {
+                    code: `body {font: stuff;}`,
+                    message: messages.propertyBlocked('font: stuff', 'font'),
+                },
+            ],
+        },
+        {
             describe: 'can make it allowed for @rules',
             ruleOptions: {
                 mode: DefaultOptionMode.BLOCK,
@@ -130,7 +148,6 @@ testDefaultRule({
                     },
                 ],
             },
-            description: 'placeholder',
             accept: [
                 {
                     code: `@font-face {font-family: serif;}`,
@@ -166,7 +183,6 @@ testDefaultRule({
             linterOptions: {
                 syntax: 'less' as const,
             },
-            description: 'placeholder',
             accept: [
                 {
                     code: `body {funky-background: blue;}`,
@@ -210,7 +226,6 @@ testDefaultRule({
                     },
                 ],
             },
-            description: 'placeholder',
             accept: [
                 {
                     code: `body {funky-background: blue;}`,
@@ -288,7 +303,6 @@ testDefaultRule({
                     },
                 ],
             },
-            description: 'placeholder',
             accept: [
                 {
                     code: `body {color: blue;}`,
