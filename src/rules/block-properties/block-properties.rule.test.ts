@@ -65,6 +65,15 @@ testDefaultRule({
                     ),
                 },
                 {
+                    code: `.my-input {font-family: sans-serif;}`,
+                    message: messages.detailedPropertyBlocked(
+                        'font-family: sans-serif',
+                        'font-family',
+                        '.my-input',
+                        'sans-serif',
+                    ),
+                },
+                {
                     code: `body {font-weight: weight;}`,
                     message: messages.propertyBlocked('font-weight: weight', 'font-weight'),
                 },
