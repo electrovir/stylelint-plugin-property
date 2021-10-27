@@ -32,7 +32,7 @@ function doesMatch(fromCss: string, criteria: string | RegExp | undefined): bool
     if (fromCss === criteria) {
         return true;
     }
-    if (fromCss.match(criteria)) {
+    if (criteria instanceof RegExp && fromCss.match(criteria)) {
         return true;
     }
 
